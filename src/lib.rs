@@ -1,14 +1,18 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+mod lexer;
+mod parser;
+mod renderer;
+
+use lexer::Lexer;
+use parser::Parser;
+use renderer::Renderer;
+
+pub fn parse_markdown(input: &str) -> String {
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let nodes = parser.parse();
+    Renderer::generate(nodes)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// TODO: Add WASM bindings
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+// TODO: Add tests
