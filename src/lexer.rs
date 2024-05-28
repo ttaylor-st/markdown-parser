@@ -1,12 +1,12 @@
 #[derive(Debug, PartialEq)]
 pub enum Token {
-    Header(String),
+    Header(String, usize),
     Paragraph(String),
 }
 
 pub struct Lexer<'a> {
     input: &'a str,
-    chars: std::str::Chars<'a>,
+    _chars: std::str::Chars<'a>,
     position: usize,
 }
 
@@ -14,29 +14,33 @@ impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
             input,
-            chars: input.chars(),
             position: 0,
+            _chars: input.chars(),
         }
     }
 
     pub fn next_token(&mut self) -> Option<Token> {
         self.skip_whitespace();
 
-        // Check for end of input, prevents panics due to out of bounds access.
         if self.position >= self.input.len() {
             return None;
         }
 
-        // Check for headers.
-        if self.input[self.position..].starts_with("# ") {
-            self.position += 2;
+        let mut level = 0;
+        while self.input[self.position..].starts_with('#') {
+            level += 1;
+            self.position += 1;
+        }
+
+        if level > 0 && self.input[self.position..].starts_with(' ') {
+            self.position += 1;
             let start = self.position;
             while self.position < self.input.len() && !self.input[self.position..].starts_with('\n')
             {
                 self.position += 1;
             }
             let value = self.input[start..self.position].to_string();
-            return Some(Token::Header(value));
+            return Some(Token::Header(value, level));
         }
 
         // Check for paragraphs.
@@ -67,7 +71,7 @@ mod tests {
         let input = "# Header\n";
         let mut lexer = Lexer::new(input);
         let token = lexer.next_token().unwrap();
-        assert_eq!(token, Token::Header("Header".to_string()));
+        assert_eq!(token, Token::Header("Header".to_string(), 1));
     }
 
     #[test]
@@ -84,7 +88,7 @@ mod tests {
         let mut lexer = Lexer::new(input);
 
         let token1 = lexer.next_token().unwrap();
-        assert_eq!(token1, Token::Header("Header".to_string()));
+        assert_eq!(token1, Token::Header("Header".to_string(), 1));
 
         let token2 = lexer.next_token().unwrap();
         assert_eq!(token2, Token::Paragraph("I am a paragraph.".to_string()));
@@ -108,7 +112,7 @@ mod tests {
         let mut lexer = Lexer::new(input);
 
         let token1 = lexer.next_token().unwrap();
-        assert_eq!(token1, Token::Header("Header 1".to_string()));
+        assert_eq!(token1, Token::Header("Header 1".to_string(), 1));
 
         let token2 = lexer.next_token().unwrap();
         assert_eq!(token2, Token::Paragraph("I am a paragraph.".to_string()));

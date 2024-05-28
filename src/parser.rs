@@ -2,7 +2,7 @@ use crate::lexer::{Lexer, Token};
 
 #[derive(Debug)]
 pub enum Node {
-    Header(String),
+    Header(String, usize),
     Paragraph(String),
 }
 
@@ -20,7 +20,7 @@ impl<'a> Parser<'a> {
 
         while let Some(token) = self.lexer.next_token() {
             match token {
-                Token::Header(text) => nodes.push(Node::Header(text)),
+                Token::Header(text, level) => nodes.push(Node::Header(text, level)),
                 Token::Paragraph(text) => nodes.push(Node::Paragraph(text)),
             }
         }

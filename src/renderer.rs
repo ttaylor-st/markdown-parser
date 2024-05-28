@@ -8,8 +8,8 @@ impl Renderer {
 
         for node in nodes {
             match node {
-                Node::Header(text) => {
-                    html.push_str(&format!("<h1>{}</h1>", text));
+                Node::Header(text, level) => {
+                    html.push_str(&format!("<h{}>{}</h{}>", level, text, level));
                 }
                 Node::Paragraph(text) => {
                     html.push_str(&format!("<p>{}</p>", text));
