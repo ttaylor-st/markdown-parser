@@ -67,11 +67,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_header() {
-        let input = "# Header\n";
+    fn test_headers() {
+        let input = "# Header 1\n## Header 2\n### Header 3\n";
         let mut lexer = Lexer::new(input);
-        let token = lexer.next_token().unwrap();
-        assert_eq!(token, Token::Header("Header".to_string(), 1));
+
+        let token1 = lexer.next_token().unwrap();
+        assert_eq!(token1, Token::Header("Header 1".to_string(), 1));
+
+        let token2 = lexer.next_token().unwrap();
+        assert_eq!(token2, Token::Header("Header 2".to_string(), 2));
+
+        let token3 = lexer.next_token().unwrap();
+        assert_eq!(token3, Token::Header("Header 3".to_string(), 3));
+
+        assert_eq!(lexer.next_token(), None);
     }
 
     #[test]
