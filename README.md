@@ -5,7 +5,15 @@ A markdown parser written in Rust, usable as a library or as a WebAssembly modul
 ## Usage
 
 ```rust
-// TODO: Add Rust usage example
+use markdown_parser::parse_markdown;
+
+fn main() {
+    let markdown = "# Hello, world!";
+    let html = parse_markdown(markdown);
+    println!("{}", html);
+}
+```
+
 ```
 
 It can also be compiled into WebAssembly and used in the browser:
