@@ -14,8 +14,6 @@ fn main() {
 }
 ```
 
-```
-
 It can also be compiled into WebAssembly and used in the browser:
 
 ```typescript
